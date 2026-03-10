@@ -1,14 +1,165 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
-    body { width: 150px; font-family: sans-serif; padding: 10px; text-align: center; }
-    button { cursor: pointer; background: #333; color: white; border: none; padding: 5px 10px; border-radius: 4px; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      width: 220px;
+      font-family: 'DM Mono', monospace;
+      padding: 20px;
+      background: #0f0f0f;
+      color: #e8e8e8;
+      overflow: hidden;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+
+    .icon {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+    }
+
+    h3 {
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #aaa;
+    }
+
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      border-radius: 10px;
+      padding: 12px 14px;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .toggle-row:hover {
+      border-color: #444;
+      background: #1f1f1f;
+    }
+
+    .toggle-label {
+      font-size: 11px;
+      letter-spacing: 0.05em;
+      color: #ccc;
+      transition: color 0.2s;
+    }
+
+    .switch {
+      position: relative;
+      width: 38px;
+      height: 21px;
+      flex-shrink: 0;
+    }
+
+    .switch input { display: none; }
+
+    .slider {
+      position: absolute;
+      inset: 0;
+      background: #333;
+      border-radius: 21px;
+      transition: background 0.25s;
+      cursor: pointer;
+    }
+
+    .slider::before {
+      content: '';
+      position: absolute;
+      width: 15px;
+      height: 15px;
+      left: 3px;
+      top: 3px;
+      background: #666;
+      border-radius: 50%;
+      transition: transform 0.25s cubic-bezier(.4,0,.2,1), background 0.25s;
+    }
+
+    input:checked + .slider {
+      background: #c8ff57;
+    }
+
+    input:checked + .slider::before {
+      transform: translateX(17px);
+      background: #0f0f0f;
+    }
+
+    .status-bar {
+      margin-top: 14px;
+      font-size: 10px;
+      letter-spacing: 0.06em;
+      color: #444;
+      text-align: center;
+      text-transform: uppercase;
+      transition: color 0.3s;
+    }
+
+    .status-bar.on {
+      color: #c8ff57;
+    }
+
+    .dot {
+      display: inline-block;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: #333;
+      margin-right: 6px;
+      vertical-align: middle;
+      transition: background 0.3s;
+    }
+
+    .status-bar.on .dot {
+      background: #c8ff57;
+      box-shadow: 0 0 6px #c8ff5799;
+      animation: pulse 1.8s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
   </style>
 </head>
 <body>
-  <h3>PDF Dark Mode</h3>
-  <p>Status: Active</p>
-  <button onclick="window.close()">Close</button>
+
+  <div class="header">
+    <svg class="icon" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="3" y="2" width="11" height="14" rx="1.5" stroke="#555" stroke-width="1.2"/>
+      <path d="M6 6h5M6 9h5M6 12h3" stroke="#555" stroke-width="1.2" stroke-linecap="round"/>
+      <circle cx="15" cy="14" r="3.5" fill="#0f0f0f" stroke="#c8ff57" stroke-width="1.2"/>
+      <path d="M13.5 14l1 1 2-1.5" stroke="#c8ff57" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <h3>PDF Dark Mode</h3>
+  </div>
+
+  <div class="toggle-row" id="toggleRow">
+    <span class="toggle-label" id="modeLabel">Dark Mode</span>
+    <label class="switch">
+      <input type="checkbox" id="darkToggle">
+      <span class="slider"></span>
+    </label>
+  </div>
+
+  <div class="status-bar" id="statusBar">
+    <span class="dot"></span>
+    <span id="statusText">inactive</span>
+  </div>
+
+  <script src="popup.js"></script>
 </body>
 </html>
