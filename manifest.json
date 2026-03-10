@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "PDF Dark Mode",
-  "version": "1.1",
+  "version": "1.2",
   "description": "Inverts colors on PDF viewers for a dark mode experience.",
   "permissions": ["activeTab", "scripting", "storage"],
   "action": {

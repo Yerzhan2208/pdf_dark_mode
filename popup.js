@@ -1,54 +1,30 @@
-const toggle = document.getElementById('darkToggle');
-const statusBar = document.getElementById('statusBar');
+const btn        = document.getElementById('toggleBtn');
+const statusBar  = document.getElementById('statusBar');
 const statusText = document.getElementById('statusText');
-const modeLabel = document.getElementById('modeLabel');
-const toggleRow = document.getElementById('toggleRow');
 
 function updateUI(enabled) {
-  toggle.checked = enabled;
-  if (enabled) {
-    statusBar.classList.add('on');
-    statusText.textContent = 'active';
-    modeLabel.textContent = 'Dark Mode';
-  } else {
-    statusBar.classList.remove('on');
-    statusText.textContent = 'inactive';
-    modeLabel.textContent = 'Light Mode';
-  }
+  btn.textContent = enabled ? 'Disable Dim Mode' : 'Enable Dim Mode';
+  btn.classList.toggle('on', enabled);
+  statusBar.classList.toggle('on', enabled);
+  statusText.textContent = enabled ? 'active' : 'inactive';
+}
+
+function reloadContentScript(tabId) {
+  chrome.scripting.executeScript({ target: { tabId }, files: ['content.js'] });
 }
 
 chrome.storage.sync.get(['darkModeEnabled'], (result) => {
-  const enabled = result.darkModeEnabled !== false; 
-  updateUI(enabled);
+  updateUI(result.darkModeEnabled !== false);
 });
 
-toggleRow.addEventListener('click', () => {
-  const newState = !toggle.checked;
-  chrome.storage.sync.set({ darkModeEnabled: newState });
-  updateUI(newState);
-
-  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-    if (!tabs[0]) return;
-    if (newState) {
-      chrome.scripting.executeScript({
-        target: { tabId: tabs[0].id },
-        func: () => {
-          if (!document.getElementById('pdf-dark-mode-style')) {
-            const s = document.createElement('style');
-            s.id = 'pdf-dark-mode-style';
-            s.innerHTML = `html { filter: invert(0.9) hue-rotate(180deg) !important; background: #111 !important; } img, video { filter: invert(1) hue-rotate(180deg) !important; }`;
-            document.head.appendChild(s);
-          }
-        }
+btn.addEventListener('click', () => {
+  chrome.storage.sync.get(['darkModeEnabled'], (result) => {
+    const newState = result.darkModeEnabled === false ? true : false;
+    chrome.storage.sync.set({ darkModeEnabled: newState }, () => {
+      updateUI(newState);
+      chrome.tabs.query({ active: true, currentWindow: true }, ([tab]) => {
+        if (tab) reloadContentScript(tab.id);
       });
-    } else {
-      chrome.scripting.executeScript({
-        target: { tabId: tabs[0].id },
-        func: () => {
-          const el = document.getElementById('pdf-dark-mode-style');
-          if (el) el.remove();
-        }
-      });
-    }
+    });
   });
 });
