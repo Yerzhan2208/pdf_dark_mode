@@ -21,7 +21,7 @@ Since this extension is not on the Chrome Web Store, you need to load it manuall
 
 1. Clone or download this repository
    ```
-   git clone https://github.com/your-username/pdf-dark-mode.git
+   git clone https://github.com/Yerzhan2208/pdf-dark-mode.git
    ```
 2. Open Chrome and go to `chrome://extensions`
 3. Enable **Developer mode** (toggle in the top-right corner)
